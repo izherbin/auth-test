@@ -71,8 +71,8 @@ app.post('/login', async (req, res, next) => {
     console.log('Попытка входа')
     try {
       if (err || !user) {
-        const error = new Error('An error occurred.')
-        res.status(401).json({ error: info.message })
+        const error = new Error(info)
+        res.status(401).json({ error: info })
         return next(error)
       }
 
@@ -88,14 +88,14 @@ app.post('/login', async (req, res, next) => {
   })(req, res, next)
 })
 
-// Выдача секретной страницы
-app
-  .use(passport.authenticate('jwt', { session: false }))
-  .get('/secret', cors(corsOptions), async (req, res) => {
-    res.send(
-      'If you read this ' + req.user.username + ' authenticated successfully'
-    )
-  })
+app.use(passport.authenticate('jwt', { session: false }))
+// Секретный эндпоинты идут ниже
+
+app.get('/secret', cors(corsOptions), async (req, res) => {
+  res.send(
+    'If you read this ' + req.user.username + ' authenticated successfully'
+  )
+})
 
 app.listen(port, () => {
   console.log(`Сервер backend запущен на порту ${port}...`)

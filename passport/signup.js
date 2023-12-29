@@ -8,9 +8,9 @@ export default function (passport) {
     'signup',
     new LocalStrategy(
       {
-        passReqToCallback: true // Позволяет отправить запрос целиком в callback
+        // passReqToCallback: true // Позволяет отправить запрос целиком в callback
       },
-      function (req, username, password, done) {
+      function (/*req, */ username, password, done) {
         console.log('Объявлена регистрация')
         // Найти пользователя в БД с таким login
         users.findOne({ username: username }, function (err, user) {
@@ -34,10 +34,7 @@ export default function (passport) {
             //* Ввод данных о пользователе
             //TODO Добавить новые данные, согласовав с фронтом
             newUser.username = username
-            newUser.password = password
-            // newUser.email = req.param('email');
-            // newUser.firstName = req.param('firstName');
-            // newUser.lastName = req.param('lastName');
+            newUser.password = createHash(password)
 
             // Сохранить пользователя
             newUser.save(function (err) {
@@ -50,7 +47,6 @@ export default function (passport) {
             })
           }
         })
-        //TODO Сделать задержку до следующего цикла событий
       }
     )
   )
