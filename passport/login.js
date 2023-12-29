@@ -1,16 +1,16 @@
 import LocalStrategy_ from 'passport-local'
 let LocalStrategy = LocalStrategy_.Strategy
 import users from '../models/users.js'
-import bCrypfrom from 'bcrypt-nodejs'
+import bCrypt from 'bcrypt-nodejs'
 
 export default function (passport) {
   passport.use(
     'login',
     new LocalStrategy(
       {
-        passReqToCallback: true
+        // passReqToCallback: true
       },
-      function (req, username, password, done) {
+      function (/*req, */ username, password, done) {
         // Проверить, есть ли такой пользователь в БД
         users.findOne({ username: username }, function (err, user) {
           // Если ошибка вернуть done с ней
@@ -32,9 +32,7 @@ export default function (passport) {
     )
   )
 
-  let isValidPassword = function (user, password) {
-    return password == user.password
-    //! return bCrypt.compareSync(password, user.password);
-    //TODO сделать криптование пароля
+  const isValidPassword = function (user, password) {
+    return bCrypt.compareSync(password, user.password)
   }
 }
